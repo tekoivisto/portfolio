@@ -178,6 +178,23 @@
   .figure-frame img, .figure-frame video{
     width:100%; height:100%; object-fit: cover; display:block;
   }
+  .mirror-frame{
+    position: relative; aspect-ratio: 16/10;
+    max-width: 50vw; margin-left: auto; margin-right: auto;
+  }
+  .mirror-frame iframe{
+    position: absolute; top:0; left:0;
+    transform-origin: top left;
+    border:0; display:block; background: var(--bg);
+    /* Promote to its own compositor layer: without this, Chrome redraws
+       the scaled iframe on the main thread every scroll frame (janky at
+       this many nested levels), and Safari's text rasterization through a
+       compounded transform can come out visibly broken. */
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+  html.mirror-nested{ scrollbar-width: none; }
+  html.mirror-nested::-webkit-scrollbar{ display: none; }
   figcaption{
     font-size: 0.85rem; color: var(--ink-dim); margin-top: 0.6rem;
     font-style: italic; text-align:center;
@@ -243,7 +260,7 @@
         <li class="sub"><a href="#proj-1-2" data-target="proj-1-2">1.2&nbsp; Professional Project 2</a></li>
         <li><a href="#personal" data-target="personal">2&nbsp; Personal Projects</a></li>
         <li class="sub"><a href="#proj-2-1" data-target="proj-2-1">2.1&nbsp; Personal Project 1</a></li>
-        <li class="sub"><a href="#proj-2-2" data-target="proj-2-2">2.2&nbsp; Personal Project 2</a></li>
+        <li class="sub"><a href="#proj-2-2" data-target="proj-2-2">2.2&nbsp; Engineering Portfolio Website</a></li>
         <li><a href="#conclusion" data-target="conclusion">3&nbsp; Conclusion</a></li>
       </ul>
     </div>
@@ -271,7 +288,7 @@
 
       <div class="toc-entry"><span class="num">2</span><a href="#personal" data-target="personal">Personal Projects</a></div>
       <div class="toc-entry sub"><span class="num">2.1</span><a href="#proj-2-1" data-target="proj-2-1">Personal Project 1</a></div>
-      <div class="toc-entry sub"><span class="num">2.2</span><a href="#proj-2-2" data-target="proj-2-2">Personal Project 2</a></div>
+      <div class="toc-entry sub"><span class="num">2.2</span><a href="#proj-2-2" data-target="proj-2-2">Engineering Portfolio Website</a></div>
 
       <div class="toc-entry"><span class="num">3</span><a href="#conclusion" data-target="conclusion">Conclusion</a></div>
     </section>
@@ -286,11 +303,12 @@
       <article class="subsection" id="proj-1-1">
         <h3><span class="num">1.1</span>Real-Time Imaging of Alpha Radiation</h3>
         <div class="tags">
+          <div>Sep 2022 &ndash; May 2023</div>
           <div>Collaborators: Prof. Juha Toivonen, Dixon Sajan</div>
           <div>Python, OpenCV</div>
         </div>
         <p>
-          Alpha radiation is a highly ionizing form of radioactive radiation and thus hazardous. Traditional methods for detecting alpha radiation rely on direct contact with the alpha particles, limiting the detection range to a few centimeters. Alpha particles ionize nitrogen molecules in the surrounding atmosphere, leading to the emission of UV light via radioluminescence. By detecting this UV light, the detection range of alpha radiation can be extended to the order of meters. Compared to direct detection, remote detection is less labor-intensive and poses a smaller safety risk to personnel mapping alpha sources. In this project conducted at Tampere University Applied Optics Group, I built and programmed a setup that captures an alpha-contamination heatmap with an EMCCD camera and overlays it on a video feed captured by a 3D camera for high-precision, real-time spatial mapping.
+          Alpha radiation is a highly ionizing form of radioactive radiation and thus hazardous. Traditional methods for detecting alpha radiation rely on direct contact with the alpha particles, limiting the detection range to a few centimeters. Alpha particles ionize nitrogen molecules in the surrounding atmosphere, leading to the emission of UV light via radioluminescence. By detecting this UV light, the detection range of alpha radiation can be extended to the order of meters. Compared to direct detection, remote sensing is less labor-intensive and poses a smaller safety risk to personnel mapping alpha sources. In this project conducted at Tampere University Applied Optics research group, I built and programmed a setup that captures an alpha-contamination heatmap with an EMCCD camera and overlays it on a video feed captured by a 3D camera for high-precision, real-time spatial mapping.
         </p>
         <p>
           The experimental setup for demonstrating real-time alpha radiation imaging via a radioluminescent UV light signal is shown in Figure 1.1. Two MBq-level alpha radiation sources are placed in a glovebox flushed with N<sub>2</sub> and 1 ppm of NO. Compared with the regular atmosphere, this mixture increases radioluminescent intensity by a factor of 100 and shifts the radioluminescent spectrum into the deep UV region, where there is no interference from sunlight or room lighting <a href="#proj-1-1-ref-1">[1]</a>. The scene is imaged simultaneously with an EMCCD camera equipped with a UV filter, which captures the alpha radiation heatmap, and a 3D camera that captures a regular visible-light image and a depth map. The alpha radiation heatmap is registered to the visible-light image in real time using the depth information for precise spatial mapping. A demonstration of real-time imaging is shown in Video 1.1.
@@ -390,19 +408,21 @@
       </article>
 
       <article class="subsection" id="proj-2-2">
-        <h3><span class="num">2.2</span>Personal Project 2</h3>
+        <h3><span class="num">2.2</span>Engineering Portfolio Website</h3>
         <div class="tags">
-          <div>2024</div>
-          <div>Skills learned: TypeScript, Web Audio API, etc</div>
-          <div>Collaborators: &mdash;</div>
+          <div>July 2026</div>
+          <div>Collaborators: Claude</div>
         </div>
         <p>
-          lorem ipsum
+          In this project, I created a website for my engineering project portfolio using HTML and CSS. A screenshot of the website is shown in Figure 2.2. In fact, you are looking at the project right now!
         </p>
         <figure>
-          <div class="figure-frame">[ image placeholder &mdash; UI screenshot ]</div>
-          <figcaption><b>Figure 2.2.</b> Sequencer interface, dark mode.</figcaption>
+          <div class="figure-frame mirror-frame" id="mirrorFrame"></div>
+          <figcaption><b>Figure 2.2.</b> A screenshot of the engineering portfolio website </figcaption>
         </figure>
+        <p>
+          Even though I have no prior experience with web development, getting an initial portfolio template site up and running took only about 15 minutes using Claude and GitHub Pages. It never ceases to amaze me how good the LLMs are these days. This website’s layout and functionality are heavily vibecoded, but the actual text, figures, and videos are created by me. In the other projects made during the AI era, I have used AI to help with debugging and to add individual, easily verifiable bits of code, but the projects are actually mady by me. AI is great when things work. When they don't, the more control you have given it, the more screwed you are.
+        </p>
       </article>
     </section>
 
@@ -430,26 +450,35 @@
     });
   }
 
-  // Smooth-scroll on TOC click (also closes mobile menu).
-  // Bound to every data-target link on the page: the sidebar nav AND the
-  // in-content "Table of Contents" page both use this attribute.
-  document.querySelectorAll('a[data-target]').forEach(a=>{
+  // Smooth-scroll on same-page anchor clicks (also closes mobile menu),
+  // covering every #hash link: sidebar nav, in-page TOC, and citations.
+  // Uses window.scrollTo() rather than el.scrollIntoView(): scrollIntoView
+  // walks up through ancestor browsing contexts, so inside the Droste
+  // mirror below it scrolled every parent frame, not just the nested
+  // copy. window.scrollTo() is scoped to this window only.
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    const targetId = a.getAttribute('href').slice(1);
+    if(!targetId) return;
     a.addEventListener('click', (e)=>{
+      const el = document.getElementById(targetId);
+      if(!el) return;
       e.preventDefault();
-      // Close the mobile dropdown first so the target's position is
-      // computed against the final (collapsed) layout, not the open one.
+      // Close the mobile dropdown first so target position reflects the
+      // collapsed layout, not the open one.
       sidebar.classList.remove('open');
       if(toggle) toggle.setAttribute('aria-expanded', false);
-      const el = document.getElementById(a.dataset.target);
-      if(el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
+      // Unlike scrollIntoView, window.scrollTo ignores scroll-padding-top,
+      // so it's applied by hand for the sticky mobile bar.
+      const scrollPaddingTop = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+      const top = el.getBoundingClientRect().top + window.scrollY - scrollPaddingTop;
+      window.scrollTo({ top, left: 0, behavior: 'smooth' });
     });
   });
 
-  // Scrollspy: highlight active TOC entry as you scroll.
-  // Only tracks the sidebar's nav links (not every id on the page), and uses
-  // each element's live position relative to the viewport rather than
-  // bounding-box intersection, so nested subsections resolve correctly
-  // instead of racing their parent section for the highlight.
+  // Scrollspy: highlight the active TOC entry as you scroll. Tracks only
+  // the sidebar's nav targets and uses live viewport position rather than
+  // bounding-box intersection, so nested subsections don't race their
+  // parent section for the highlight.
   const navLinks = document.querySelectorAll('.toc-nav a[data-target]');
   const scrollTargets = Array.from(navLinks)
     .map(link => ({ link, el: document.getElementById(link.dataset.target) }))
@@ -477,6 +506,128 @@
   }, { passive: true });
   window.addEventListener('resize', updateActiveLink);
   updateActiveLink();
+
+  // Recursive "Droste effect" mirror (Figure 2.2): this page embedded in
+  // an iframe inside itself, capped at MAX_MIRROR_DEPTH via a ?mirror=N
+  // param each level decrements for its own child. Every level runs this
+  // same script, sizing its child iframe to its own real window size (so
+  // the child always gets the full desktop layout) then shrinking it with
+  // a CSS transform to fit the figure box -- since transforms scale
+  // descendants too, this shrink compounds through the recursion, which
+  // is what makes everything smaller at each level.
+  //
+  // Scroll position relays downward the same way (each level forwards its
+  // scrollY to its child). Clicks scroll only the clicked nested copy
+  // (frame-scoped click handler above); wheel/touch input instead relays
+  // upward to the true top page, whose resulting scroll re-triggers the
+  // downward sync -- so any divergence a click caused only lasts until
+  // the next scroll.
+  (function(){
+    const MAX_MIRROR_DEPTH = 10;
+    const params = new URLSearchParams(location.search);
+    const depth = params.has('mirror') ? parseInt(params.get('mirror'), 10) : MAX_MIRROR_DEPTH;
+    const isNested = window.parent !== window;
+    document.documentElement.classList.toggle('mirror-nested', isNested);
+
+    const relayWheelUp = (deltaY) => {
+      if(isNested){
+        window.parent.postMessage({ type: 'mirror-wheel', deltaY }, '*');
+      } else {
+        // 'auto' would defer to the global scroll-behavior:smooth CSS and
+        // animate every tick; 'instant' bypasses that, matching native wheel.
+        window.scrollBy({ top: deltaY, behavior: 'instant' });
+      }
+    };
+
+    const mirrorFrame = document.getElementById('mirrorFrame');
+    if(mirrorFrame && depth > 0){
+      const iframe = document.createElement('iframe');
+      iframe.src = location.pathname + '?mirror=' + (depth - 1);
+      iframe.title = 'Recursive preview of this page';
+      iframe.setAttribute('tabindex', '-1');
+      iframe.setAttribute('aria-hidden', 'true');
+      mirrorFrame.appendChild(iframe);
+
+      const layout = () => {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        mirrorFrame.style.aspectRatio = w + ' / ' + h;
+        iframe.style.width = w + 'px';
+        iframe.style.height = h + 'px';
+        const scale = mirrorFrame.clientWidth / w;
+        iframe.style.transform = 'scale(' + scale + ')';
+      };
+
+      let mirrorTicking = false;
+      const syncScroll = () => {
+        if(mirrorTicking) return;
+        mirrorTicking = true;
+        window.requestAnimationFrame(() => {
+          iframe.contentWindow && iframe.contentWindow.postMessage(
+            { type: 'mirror-scroll', y: window.scrollY }, '*'
+          );
+          mirrorTicking = false;
+        });
+      };
+
+      layout();
+      iframe.addEventListener('load', syncScroll);
+      window.addEventListener('scroll', syncScroll, { passive: true });
+      window.addEventListener('resize', () => { layout(); syncScroll(); });
+    }
+
+    // Intercept wheel/touch on nested copies and relay it upward instead
+    // of scrolling this document directly. Deltas are accumulated and
+    // flushed once per animation frame rather than posted per event --
+    // relaying every trackpad tick individually made scrolling feel
+    // noticeably slower than scrolling outside the figure.
+    if(isNested){
+      let pendingDeltaY = 0;
+      let wheelFlushScheduled = false;
+      const flushWheel = () => {
+        wheelFlushScheduled = false;
+        if(pendingDeltaY !== 0){
+          relayWheelUp(pendingDeltaY);
+          pendingDeltaY = 0;
+        }
+      };
+      const queueWheel = (deltaY) => {
+        pendingDeltaY += deltaY;
+        if(!wheelFlushScheduled){
+          wheelFlushScheduled = true;
+          window.requestAnimationFrame(flushWheel);
+        }
+      };
+
+      window.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        queueWheel(e.deltaY);
+      }, { passive: false });
+
+      let touchY = null;
+      window.addEventListener('touchstart', (e) => {
+        touchY = e.touches[0].clientY;
+      }, { passive: true });
+      window.addEventListener('touchmove', (e) => {
+        if(touchY === null) return;
+        const y = e.touches[0].clientY;
+        const delta = touchY - y;
+        touchY = y;
+        e.preventDefault();
+        queueWheel(delta);
+      }, { passive: false });
+      window.addEventListener('touchend', () => { touchY = null; });
+    }
+
+    window.addEventListener('message', (e) => {
+      if(!e.data) return;
+      if(e.data.type === 'mirror-scroll'){
+        window.scrollTo(0, e.data.y);
+      } else if(e.data.type === 'mirror-wheel'){
+        relayWheelUp(e.data.deltaY);
+      }
+    });
+  })();
 </script>
 
 </body>
