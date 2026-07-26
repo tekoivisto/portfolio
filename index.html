@@ -414,7 +414,7 @@
           <div>Collaborators: Ph.D. Claude</div>
         </div>
         <p>
-          In this project, I created a website for my engineering project portfolio using HTML and CSS. A screenshot of the website is shown in Figure 2.2. In fact, you are looking at the project right now!
+          In this project, I created a website for my engineering project portfolio using HTML and CSS. In fact, you are looking at the project right now! A screenshot of the website is shown in Figure 2.2.
         </p>
         <figure>
           <div class="figure-frame mirror-frame" id="mirrorFrame"></div>
@@ -517,27 +517,21 @@
   // is what makes everything smaller at each level.
   //
   // Scroll position relays downward the same way (each level forwards its
-  // scrollY to its child). Clicks scroll only the clicked nested copy
-  // (frame-scoped click handler above); wheel/touch input instead relays
-  // upward to the true top page, whose resulting scroll re-triggers the
-  // downward sync -- so any divergence a click caused only lasts until
-  // the next scroll.
+  // scrollY to its child). Hovering/touching a nested copy scrolls that
+  // copy natively -- wheel and touch input are deliberately left alone
+  // rather than intercepted, since each iframe already has its own
+  // independent scroll container and trying to redirect that input
+  // upward proved unreliable across browsers. Scrolling the real outer
+  // page still overrides this: its 'scroll' event re-triggers the
+  // downward sync below, which snaps every nested copy back to mirroring
+  // it, discarding whatever position a nested copy had scrolled to on
+  // its own.
   (function(){
-    const MAX_MIRROR_DEPTH = 10;
+    const MAX_MIRROR_DEPTH = 7;
     const params = new URLSearchParams(location.search);
     const depth = params.has('mirror') ? parseInt(params.get('mirror'), 10) : MAX_MIRROR_DEPTH;
     const isNested = window.parent !== window;
     document.documentElement.classList.toggle('mirror-nested', isNested);
-
-    const relayWheelUp = (deltaY) => {
-      if(isNested){
-        window.parent.postMessage({ type: 'mirror-wheel', deltaY }, '*');
-      } else {
-        // 'auto' would defer to the global scroll-behavior:smooth CSS and
-        // animate every tick; 'instant' bypasses that, matching native wheel.
-        window.scrollBy({ top: deltaY, behavior: 'instant' });
-      }
-    };
 
     const mirrorFrame = document.getElementById('mirrorFrame');
     if(mirrorFrame && depth > 0){
@@ -576,55 +570,9 @@
       window.addEventListener('resize', () => { layout(); syncScroll(); });
     }
 
-    // Intercept wheel/touch on nested copies and relay it upward instead
-    // of scrolling this document directly. Deltas are accumulated and
-    // flushed once per animation frame rather than posted per event --
-    // relaying every trackpad tick individually made scrolling feel
-    // noticeably slower than scrolling outside the figure.
-    if(isNested){
-      let pendingDeltaY = 0;
-      let wheelFlushScheduled = false;
-      const flushWheel = () => {
-        wheelFlushScheduled = false;
-        if(pendingDeltaY !== 0){
-          relayWheelUp(pendingDeltaY);
-          pendingDeltaY = 0;
-        }
-      };
-      const queueWheel = (deltaY) => {
-        pendingDeltaY += deltaY;
-        if(!wheelFlushScheduled){
-          wheelFlushScheduled = true;
-          window.requestAnimationFrame(flushWheel);
-        }
-      };
-
-      window.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        queueWheel(e.deltaY);
-      }, { passive: false });
-
-      let touchY = null;
-      window.addEventListener('touchstart', (e) => {
-        touchY = e.touches[0].clientY;
-      }, { passive: true });
-      window.addEventListener('touchmove', (e) => {
-        if(touchY === null) return;
-        const y = e.touches[0].clientY;
-        const delta = touchY - y;
-        touchY = y;
-        e.preventDefault();
-        queueWheel(delta);
-      }, { passive: false });
-      window.addEventListener('touchend', () => { touchY = null; });
-    }
-
     window.addEventListener('message', (e) => {
-      if(!e.data) return;
-      if(e.data.type === 'mirror-scroll'){
+      if(e.data && e.data.type === 'mirror-scroll'){
         window.scrollTo(0, e.data.y);
-      } else if(e.data.type === 'mirror-wheel'){
-        relayWheelUp(e.data.deltaY);
       }
     });
   })();
