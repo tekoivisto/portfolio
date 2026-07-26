@@ -83,8 +83,8 @@
     border-left: 2px solid transparent;
     transition: color .15s ease, border-color .15s ease, background .15s ease;
   }
-  .toc-nav a:hover{ color: var(--ink); text-decoration:none; }
   .toc-nav .sub a{ font-size: 0.85rem; padding-left: 1.1rem; color: var(--ink-dim); }
+  .toc-nav a:hover{ color: var(--ink); text-decoration:none; }
   .toc-nav a.active{
     color: var(--ink);
     border-left-color: var(--accent);
@@ -202,6 +202,7 @@
 
   /* ---------- Mobile ---------- */
   @media (max-width: 860px){
+    html{ scroll-padding-top: 5.5rem; }
     .layout{ grid-template-columns: 1fr; }
     .sidebar{
       position: sticky; top:0; height:auto; max-height: none;
@@ -323,29 +324,53 @@
     });
   }
 
-  // Smooth-scroll on TOC click (also closes mobile menu)
+  // Smooth-scroll on TOC click (also closes mobile menu).
+  // Bound to every data-target link on the page: the sidebar nav AND the
+  // in-content "Table of Contents" page both use this attribute.
   document.querySelectorAll('a[data-target]').forEach(a=>{
     a.addEventListener('click', (e)=>{
       e.preventDefault();
-      const el = document.getElementById(a.dataset.target);
-      if(el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
+      // Close the mobile dropdown first so the target's position is
+      // computed against the final (collapsed) layout, not the open one.
       sidebar.classList.remove('open');
       if(toggle) toggle.setAttribute('aria-expanded', false);
+      const el = document.getElementById(a.dataset.target);
+      if(el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
     });
   });
 
-  // Scrollspy: highlight active TOC entry as you scroll
-  const sections = document.querySelectorAll('[id]');
+  // Scrollspy: highlight active TOC entry as you scroll.
+  // Only tracks the sidebar's nav links (not every id on the page), and uses
+  // each element's live position relative to the viewport rather than
+  // bounding-box intersection, so nested subsections resolve correctly
+  // instead of racing their parent section for the highlight.
   const navLinks = document.querySelectorAll('.toc-nav a[data-target]');
-  const setActive = (id) => {
-    navLinks.forEach(l => l.classList.toggle('active', l.dataset.target === id));
-  };
-  const observer = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){ setActive(entry.target.id); }
-    });
-  }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
-  sections.forEach(s => observer.observe(s));
+  const scrollTargets = Array.from(navLinks)
+    .map(link => ({ link, el: document.getElementById(link.dataset.target) }))
+    .filter(t => t.el);
+  const ACTIVATION_LINE = 96; // px from top of viewport counted as "reached"
+
+  function updateActiveLink(){
+    let current = scrollTargets[0];
+    for(const t of scrollTargets){
+      if(t.el.getBoundingClientRect().top <= ACTIVATION_LINE){ current = t; }
+      else{ break; }
+    }
+    scrollTargets.forEach(t => t.link.classList.toggle('active', t === current));
+  }
+
+  let scrollspyTicking = false;
+  window.addEventListener('scroll', () => {
+    if(!scrollspyTicking){
+      window.requestAnimationFrame(() => {
+        updateActiveLink();
+        scrollspyTicking = false;
+      });
+      scrollspyTicking = true;
+    }
+  }, { passive: true });
+  window.addEventListener('resize', updateActiveLink);
+  updateActiveLink();
 </script>
 
 </body>
