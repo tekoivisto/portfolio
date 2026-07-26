@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teemu Koivisto — Engineering Portfolio</title>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/vsalvino/computer-modern@main/fonts/serif.css">
+<style>
+  :root{
+    --bg: #060606;
+    --page: #060606;
+    --ink: #e9e7e1;
+    --ink-dim: #9a9a94;
+    --rule: #2b2b28;
+    --link: #7fa8d1;
+    --accent: #b98a4f;
+  }
+  *{ box-sizing: border-box; }
+  ::selection{ background: var(--accent); color: #060606; }
+
+  html{ scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+  }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Computer Modern Serif", Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  a{ color: var(--link); text-decoration: none; }
+  a:hover{ text-decoration: underline; }
+  a:focus-visible, button:focus-visible{
+    outline: 2px solid var(--link);
+    outline-offset: 3px;
+  }
+
+  /* ---------- Layout: sidebar + document column ---------- */
+  .layout{
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+  }
+
+  .sidebar{
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 3rem 1.75rem;
+    border-right: 1px solid var(--rule);
+  }
+  .sidebar h2{
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin: 0 0 1.4rem 0;
+    font-weight: 400;
+  }
+  .toc-nav ul{ list-style:none; margin:0; padding:0; }
+  .toc-nav li{ margin: 0.15rem 0; }
+  .toc-nav a{
+    display:block;
+    color: var(--ink-dim);
+    font-size: 0.95rem;
+    padding: 0.25rem 0.5rem;
+    border-left: 2px solid transparent;
+    transition: color .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .toc-nav a:hover{ color: var(--ink); text-decoration:none; }
+  .toc-nav .sub a{ font-size: 0.85rem; padding-left: 1.1rem; color: var(--ink-dim); }
+  .toc-nav a.active{
+    color: var(--ink);
+    border-left-color: var(--accent);
+    background: rgba(185,138,79,0.08);
+  }
+
+  .sidebar-toggle{
+    display:none;
+  }
+
+  /* ---------- Document column ---------- */
+  .doc{ max-width: 760px; margin: 0 auto; padding: 0 2.5rem; }
+
+  .page{
+    position: relative;
+    padding: 5rem 0 6rem 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .page:last-of-type{ border-bottom: none; }
+
+  .running-header{
+    position: absolute;
+    top: 1.5rem; left: 0; right: 0;
+    display:flex; justify-content: space-between;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 0.6rem;
+  }
+  .page-number{
+    position:absolute; bottom: 1.5rem; left:0; right:0;
+    text-align:center; font-size: 0.85rem; color: var(--ink-dim);
+  }
+
+  /* ---------- Title page ---------- */
+  .titlepage{
+    min-height: 100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding: 4rem 0;
+  }
+  .titlepage .kicker{
+    font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--ink-dim); margin-bottom: 2rem;
+  }
+  .titlepage h1{
+    font-size: 3rem; font-weight: 400; margin: 0 0 0.5rem 0; line-height: 1.2;
+  }
+  .titlepage .subtitle{
+    font-size: 1.15rem; color: var(--ink-dim); font-style: italic; margin-bottom: 3rem;
+  }
+  .titlepage .meta{ font-size: 0.95rem; color: var(--ink-dim); }
+  .titlepage .rule{
+    width: 120px; height: 1px; background: var(--rule); margin: 2.5rem auto;
+  }
+
+  /* ---------- TOC page ---------- */
+  .toc-page h1{ font-size: 1.7rem; font-weight:400; margin-bottom: 2.5rem; text-align:center; }
+  .toc-entry{
+    display:flex; align-items:baseline; gap: 0.5rem;
+    margin: 0.9rem 0;
+  }
+  .toc-entry .num{ color: var(--ink-dim); width: 2rem; flex-shrink:0; }
+  .toc-entry a{ color: var(--ink); white-space: nowrap; }
+  .toc-entry .leader{
+    flex:1; border-bottom: 1px dotted var(--rule); position: relative; top: -0.3rem;
+  }
+  .toc-entry .pg{ color: var(--ink-dim); }
+  .toc-entry.sub{ margin-left: 2rem; font-size: 0.95rem; }
+  .toc-entry.sub .num{ width: 3rem; }
+
+  /* ---------- Section / subsection headings ---------- */
+  .section-title{
+    font-size: 2rem; font-weight:400; margin: 0 0 0.3rem 0;
+  }
+  .section-title .num{ color: var(--accent); margin-right: 0.6rem; }
+  .section-intro{ color: var(--ink-dim); font-style: italic; margin-bottom: 3rem; }
+
+  .subsection{ margin-top: 4rem; }
+  .subsection h3{
+    font-size: 1.35rem; font-weight: 400; margin-bottom: 0.3rem;
+  }
+  .subsection h3 .num{ color: var(--accent); margin-right: 0.5rem; }
+  .subsection .tags{
+    font-size: 0.8rem; color: var(--ink-dim); letter-spacing: 0.04em;
+    margin-bottom: 1.2rem;
+  }
+  .subsection p{ text-align: justify; }
+
+  /* ---------- Figures (image / video) ---------- */
+  figure{ margin: 1.8rem 0; }
+  .figure-frame{
+    border: 1px solid var(--rule);
+    background: #0d0d0c;
+    aspect-ratio: 16/9;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--ink-dim);
+    font-size: 0.85rem;
+    overflow:hidden;
+  }
+  .figure-frame img, .figure-frame video{
+    width:100%; height:100%; object-fit: cover; display:block;
+  }
+  figcaption{
+    font-size: 0.85rem; color: var(--ink-dim); margin-top: 0.6rem;
+    font-style: italic; text-align:center;
+  }
+  figcaption b{ font-style: normal; color: var(--ink); }
+
+  .project-links{ font-size: 0.9rem; margin-top: 1rem; }
+  .project-links a{ margin-right: 1.2rem; }
+
+  /* ---------- Conclusion ---------- */
+  .conclusion p{ text-align: justify; }
+  .signoff{ margin-top: 3rem; color: var(--ink-dim); font-style: italic; }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 860px){
+    .layout{ grid-template-columns: 1fr; }
+    .sidebar{
+      position: sticky; top:0; height:auto; max-height: none;
+      border-right:none; border-bottom: 1px solid var(--rule);
+      padding: 1rem 1.5rem;
+      z-index: 10;
+      background: var(--bg);
+    }
+    .sidebar-toggle{
+      display:flex; width:100%; justify-content:space-between; align-items:center;
+      background:none; border:none; color: var(--ink);
+      font-family: inherit; font-size: 0.95rem; padding: 0.4rem 0; cursor:pointer;
+    }
+    .toc-nav{ display:none; margin-top: 1rem; }
+    .sidebar.open .toc-nav{ display:block; }
+    .doc{ padding: 0 1.25rem; }
+    .titlepage h1{ font-size: 2.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR TABLE OF CONTENTS -->
+  <nav class="sidebar" id="sidebar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-expanded="false" aria-controls="tocNav">
+      <span>Contents</span><span aria-hidden="true">▾</span>
+    </button>
+    <h2 class="desktop-only">Contents</h2>
+    <div class="toc-nav" id="tocNav">
+      <ul>
+        <li><a href="#title" data-target="title">Title</a></li>
+        <li><a href="#toc" data-target="toc">Table of Contents</a></li>
+        <li><a href="#professional" data-target="professional">1&nbsp; Professional Projects</a></li>
+        <li class="sub"><a href="#proj-1-1" data-target="proj-1-1">1.1&nbsp; Distributed Load Balancer</a></li>
+        <li class="sub"><a href="#proj-1-2" data-target="proj-1-2">1.2&nbsp; Real‑Time Vision Pipeline</a></li>
+        <li><a href="#personal" data-target="personal">2&nbsp; Personal Projects</a></li>
+        <li class="sub"><a href="#proj-2-1" data-target="proj-2-1">2.1&nbsp; Line‑Following Robot</a></li>
+        <li class="sub"><a href="#proj-2-2" data-target="proj-2-2">2.2&nbsp; Generative Music Sequencer</a></li>
+        <li><a href="#conclusion" data-target="conclusion">3&nbsp; Conclusion</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- DOCUMENT -->
+  <main class="doc">
+
+    <!-- TITLE PAGE -->
+    <section class="page titlepage" id="title">
+      <div class="kicker">Engineering Portfolio</div>
+      <h1>Teemu Koivisto</h1>
+      <div class="subtitle">Selected Projects, 2023&ndash;2026</div>
+      <div class="rule"></div>
+      <div class="meta">Applied Physicist<br>teemu.koivisto@tuni.fi &middot; github.com/tekoivisto</div>
+    </section>
+
+    <!-- TABLE OF CONTENTS PAGE -->
+    <section class="page toc-page" id="toc">
+      <h1>Contents</h1>
+
+      <div class="toc-entry"><span class="num">1</span><a href="#professional" data-target="professional">Professional Projects</a><span class="leader"></span><span class="pg">03</span></div>
+      <div class="toc-entry sub"><span class="num">1.1</span><a href="#proj-1-1" data-target="proj-1-1">Distributed Load Balancer</a><span class="leader"></span><span class="pg">03</span></div>
+      <div class="toc-entry sub"><span class="num">1.2</span><a href="#proj-1-2" data-target="proj-1-2">Real&#8209;Time Vision Pipeline</a><span class="leader"></span><span class="pg">04</span></div>
+
+      <div class="toc-entry"><span class="num">2</span><a href="#personal" data-target="personal">Personal Projects</a><span class="leader"></span><span class="pg">05</span></div>
+      <div class="toc-entry sub"><span class="num">2.1</span><a href="#proj-2-1" data-target="proj-2-1">Line&#8209;Following Robot</a><span class="leader"></span><span class="pg">05</span></div>
+      <div class="toc-entry sub"><span class="num">2.2</span><a href="#proj-2-2" data-target="proj-2-2">Generative Music Sequencer</a><span class="leader"></span><span class="pg">06</span></div>
+
+      <div class="toc-entry"><span class="num">3</span><a href="#conclusion" data-target="conclusion">Conclusion</a><span class="leader"></span><span class="pg">07</span></div>
+    </section>
+
+    <!-- SECTION 1: PROFESSIONAL PROJECTS -->
+    <section class="page" id="professional">
+      <div class="running-header"><span>Teemu Koivisto &middot; Engineering Portfolio</span><span>Professional Projects</span></div>
+
+      <h2 class="section-title"><span class="num">1</span>Professional Projects</h2>
+      <p class="section-intro">Work completed as part of full-time and contract engineering roles.</p>
+
+      <article class="subsection" id="proj-1-1">
+        <h3><span class="num">1.1</span>Distributed Load Balancer</h3>
+        <div class="tags">Go &middot; gRPC &middot; Kubernetes &middot; 2025</div>
+        <p>
+          A consistent-hashing load balancer built to smooth traffic spikes across a
+          fleet of stateless workers. Rebalances in under 200ms on node failure and
+          cut p99 latency by 38% in production. Replace this paragraph with your own
+          project summary &mdash; a couple of sentences on the problem, your approach,
+          and the measurable outcome reads well here.
+        </p>
+        <figure>
+          <div class="figure-frame">
+            <!-- Replace with: <img src="assets/load-balancer-diagram.png" alt="..."> -->
+            [ image placeholder &mdash; architecture diagram ]
+          </div>
+          <figcaption><b>Figure 1.1.</b> System architecture: request routing across worker shards.</figcaption>
+        </figure>
+        <figure>
+          <div class="figure-frame">
+            <!-- Replace with either a self-hosted clip:
+                 <video controls poster="assets/thumb.jpg"><source src="assets/demo.mp4" type="video/mp4"></video>
+                 or an embed:
+                 <iframe src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe> -->
+            [ video placeholder &mdash; failover demo ]
+          </div>
+          <figcaption><b>Figure 1.2.</b> Live failover demo: killing a node mid-request.</figcaption>
+        </figure>
+        <div class="project-links">
+          <a href="#">Source &#8594;</a><a href="#">Write&#8209;up &#8594;</a>
+        </div>
+      </article>
+
+      <article class="subsection" id="proj-1-2">
+        <h3><span class="num">1.2</span>Real&#8209;Time Vision Pipeline</h3>
+        <div class="tags">Python &middot; PyTorch &middot; ONNX Runtime &middot; 2024</div>
+        <p>
+          On-device object detection pipeline optimized for edge hardware, running
+          at 30fps on a Jetson Nano. Swap in your own project description here.
+        </p>
+        <figure>
+          <div class="figure-frame">[ image placeholder &mdash; pipeline diagram ]</div>
+          <figcaption><b>Figure 1.3.</b> Inference pipeline from camera capture to bounding boxes.</figcaption>
+        </figure>
+        <div class="project-links"><a href="#">Source &#8594;</a></div>
+      </article>
+    </section>
+
+    <!-- SECTION 2: PERSONAL PROJECTS -->
+    <section class="page" id="personal">
+      <div class="running-header"><span>Teemu Koivisto &middot; Engineering Portfolio</span><span>Personal Projects</span></div>
+
+      <h2 class="section-title"><span class="num">2</span>Personal Projects</h2>
+      <p class="section-intro">Independent builds, done for fun and for learning.</p>
+
+      <article class="subsection" id="proj-2-1">
+        <h3><span class="num">2.1</span>Line&#8209;Following Robot</h3>
+        <div class="tags">C++ &middot; Arduino &middot; PID Control &middot; 2023</div>
+        <p>
+          A two-wheeled robot with a PID-tuned IR sensor array, built to compete
+          in a local robotics club challenge. Placeholder text &mdash; describe your
+          build, the hardest bug you fixed, and what you'd do differently.
+        </p>
+        <figure>
+          <div class="figure-frame">[ video placeholder &mdash; track run ]</div>
+          <figcaption><b>Figure 2.1.</b> Full track run, unedited.</figcaption>
+        </figure>
+      </article>
+
+      <article class="subsection" id="proj-2-2">
+        <h3><span class="num">2.2</span>Generative Music Sequencer</h3>
+        <div class="tags">TypeScript &middot; Web Audio API &middot; 2024</div>
+        <p>
+          A browser-based step sequencer that generates variations on a seed melody
+          using a simple Markov chain. Placeholder text for your own summary.
+        </p>
+        <figure>
+          <div class="figure-frame">[ image placeholder &mdash; UI screenshot ]</div>
+          <figcaption><b>Figure 2.2.</b> Sequencer interface, dark mode.</figcaption>
+        </figure>
+      </article>
+    </section>
+
+    <!-- SECTION 3: CONCLUSION -->
+    <section class="page conclusion" id="conclusion">
+      <div class="running-header"><span>Teemu Koivisto &middot; Engineering Portfolio</span><span>Conclusion</span></div>
+      <h2 class="section-title"><span class="num">3</span>Conclusion</h2>
+      <p>
+        Replace this with a short closing note &mdash; what you're building toward,
+        what kind of role or collaboration you're looking for, and the best way
+        to reach you.
+      </p>
+      <p class="signoff">Thank you for reading. &mdash; A.R.</p>
+      <div class="page-number">7</div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Mobile TOC toggle
+  const toggle = document.getElementById('sidebarToggle');
+  const sidebar = document.getElementById('sidebar');
+  if(toggle){
+    toggle.addEventListener('click', () => {
+      const open = sidebar.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open);
+    });
+  }
+
+  // Smooth-scroll on TOC click (also closes mobile menu)
+  document.querySelectorAll('a[data-target]').forEach(a=>{
+    a.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const el = document.getElementById(a.dataset.target);
+      if(el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
+      sidebar.classList.remove('open');
+      if(toggle) toggle.setAttribute('aria-expanded', false);
+    });
+  });
+
+  // Scrollspy: highlight active TOC entry as you scroll
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('.toc-nav a[data-target]');
+  const setActive = (id) => {
+    navLinks.forEach(l => l.classList.toggle('active', l.dataset.target === id));
+  };
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){ setActive(entry.target.id); }
+    });
+  }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
