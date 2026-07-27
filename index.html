@@ -286,7 +286,7 @@
         <li class="sub"><a href="#proj-1-1" data-target="proj-1-1">1.1&nbsp; Real-Time Imaging of Alpha Radiation</a></li>
         <li class="sub"><a href="#proj-1-2" data-target="proj-1-2">1.2&nbsp; Predicting Mechanical Properties of Nanopillars by Interpretable Machine Learning</a></li>
         <li><a href="#personal" data-target="personal">2&nbsp; Personal Projects</a></li>
-        <li class="sub"><a href="#proj-2-1" data-target="proj-2-1">2.1&nbsp; Personal Project 1</a></li>
+        <li class="sub"><a href="#proj-2-1" data-target="proj-2-1">2.1&nbsp; Numerical Simulation and Optimization of a Mechanical Disc Golf Launcher</a></li>
         <li class="sub"><a href="#proj-2-2" data-target="proj-2-2">2.2&nbsp; Engineering Portfolio Website</a></li>
         <li><a href="#conclusion" data-target="conclusion">3&nbsp; Conclusion</a></li>
       </ul>
@@ -314,7 +314,7 @@
       <div class="toc-entry sub"><span class="num">1.2</span><a href="#proj-1-2" data-target="proj-1-2">Predicting Mechanical Properties of Nanopillars by Interpretable Machine Learning</a></div>
 
       <div class="toc-entry"><span class="num">2</span><a href="#personal" data-target="personal">Personal Projects</a></div>
-      <div class="toc-entry sub"><span class="num">2.1</span><a href="#proj-2-1" data-target="proj-2-1">Personal Project 1</a></div>
+      <div class="toc-entry sub"><span class="num">2.1</span><a href="#proj-2-1" data-target="proj-2-1">Numerical Simulation and Optimization of a Mechanical Disc Golf Launcher</a></div>
       <div class="toc-entry sub"><span class="num">2.2</span><a href="#proj-2-2" data-target="proj-2-2">Engineering Portfolio Website</a></div>
 
       <div class="toc-entry"><span class="num">3</span><a href="#conclusion" data-target="conclusion">Conclusion</a></div>
@@ -401,7 +401,7 @@
           <div>HPC, Python, Tensorflow, LAMMPS</div>
         </div>
         <p>
-          Neural networks are applied to solve increasingly complex problems. However, the improvements in performance are achieved with increasingly complex neural networks, turning them into "black-box models" that are not interpretable by humans. In materials science, machine learning models have proven to be powerful tools for discovering links between microstructure and material properties, but the black-box nature of these models limits the physical insights one might gain from them. In this project conducted at the Tampere University Computational Physics Laboratory Complex Systems research group, I studied the mechanical properties of nanopillars using convolutional neural networks (CNNs) and aimed to interpret the predictions of the black-box model with interpretation techniques. I also wrote my bachelor’s thesis on this project, which led to a first-author publication in APL Machine Learning <a href="#proj-1-2-ref-1">[1]</a>.
+          Neural networks are applied to solve increasingly complex problems. However, the improvements in performance are achieved with increasingly complex neural networks, turning them into "black-box models" that are not interpretable by humans. In materials science, machine learning models have proven to be powerful tools for discovering links between microstructure and material properties, but the black-box nature of these models limits the physical insights one might gain from them. In this project conducted at the Tampere University Computational Physics Laboratory Complex Systems research group, I studied the mechanical properties of nanopillars using convolutional neural networks (CNNs) and gained insights to the predictions of the black-box model using interpretation techniques. I also wrote my bachelor’s thesis on this project, which led to a first-author publication in APL Machine Learning <a href="#proj-1-2-ref-1">[1]</a>.
         </p>
         <p>
           The computational study is schematically presented in Figure 1.2. First, a dataset of 5000 polycrystalline nanopillars and their corresponding stress–strain curves during deformation is generated using molecular dynamics (MD) simulations. The dataset is used to train a CNN to predict the Young’s moduli and yield stresses of the nanopillars. Different representations of the initial atomic structure are used as input to the CNN to study how much information about the mechanical properties each representation contains. Finally, the internal workings of the otherwise black-box CNN predictions are interpreted with gradient-weighted class activation mapping (Grad-CAM). Selected figures from my bachelor’s thesis and paper are presented in Figure 1.3. The computational tools used in this project are listed in Table 1.1.
@@ -448,18 +448,51 @@
       <p class="section-intro">Independent builds, done for fun and for learning.</p>
 
       <article class="subsection" id="proj-2-1">
-        <h3><span class="num">2.1</span>Personal Project 1</h3>
+        <h3><span class="num">2.1</span>Numerical Simulation and Optimization of a Mechanical Disc Golf Launcher</h3>
         <div class="tags">
           <div>2023</div>
-          <div>Skills learned: C++, Arduino, PID Control, etc</div>
-          <div>Collaborators: &mdash;</div>
+          <div>Python</div>
         </div>
         <p>
-          lorem ipsum
+          Throwing technique is of the utmost importance in the sport of disc golf. Players who are less physically strong but have better technique can typically throw further and more accurately than physically stronger players with poor technique. A commonly given technique advice is that the throwing arm should be like a whip: the arm is relaxed, and most of the power comes from the lower body. In this project, I simulated and optimized a mechanical disc golf launcher from scratch inspired by this technique advice.
         </p>
         <figure>
-          <div class="figure-frame">[ video placeholder &mdash; track run ]</div>
-          <figcaption><b>Figure 2.1.</b> Full track run, unedited.</figcaption>
+          <div class="figure-frame" style="aspect-ratio: 2524 / 1556;">
+            <video controls style="object-fit: contain;"><source src="media/video/disc-golf-launcher-starting-point-1.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption><b>Video 2.1.</b> Simulated disc golf launcher. The animation is slowed down by a factor of 10. (right) Throwing arm as viewed from above. (up left) Weight powering the arm as viewed from the side. The upper dotted line shows initial dropping height, and the lower dotted line shows the height when the rope comes under tension. The green line represents the amount of stretch in the rubber band. (bottom right) Energy of the disc during the launch as a function of time. The dotted lines show how the disc energy would evolve if the disc was not released.</figcaption>
+        </figure>
+        <table class="latex-table">
+          <caption><b>Table 2.1.</b> Optimization parameters of the mechanical disc golf launcher. In total, 15 parameters are optimized. The cost function is given simply by the negative of the total disc energy at launch.</caption>
+          <thead>
+            <tr><th>Optimized parameter</th><th>Number of parameters</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Starting angles of rods and disc (excluding base rod)</td><td>4</td></tr>
+            <tr><td>Lengths of rods</td><td>4</td></tr>
+            <tr><td>Linear mass densities of rods</td><td>4</td></tr>
+            <tr><td>Radius of power transfer wheel at base rod</td><td>1</td></tr>
+            <tr><td>Height of the weight at which the rope loses its slack and weight starts pulling on the wheel</td><td>1</td></tr>
+            <tr><td>Elastic constant of rubber band connecting the weight and the rope</td><td>1</td></tr>
+          </tbody>
+        </table>
+        <figure>
+          <div class="figure-frame" style="aspect-ratio: 2524 / 1556;">
+            <video controls style="object-fit: contain;"><source src="media/video/disc-golf-launcher-hooke-jeeves-starting-point-1.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption><b>Video 2.2.</b> Hooke&ndash;Jeeves optimized launcher, starting from the launcher shown in Video 2.1.</figcaption>
+        </figure>
+        <figure>
+          <div class="figure-frame" style="aspect-ratio: 2524 / 1556;">
+            <video controls style="object-fit: contain;"><source src="media/video/disc-golf-launcher-genetic-rng-2.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption><b>Video 2.3.</b> Genetic algorithm optimized launcher.</figcaption>
+        </figure>
+        <figure>
+          <div class="figure-frame" style="aspect-ratio: 1748 / 1294; max-width: 80%; margin-left: auto; margin-right: auto;">
+            <img src="media/image/disc-golf-launcher-convergence.png" alt="Disc golf launcher optimization convergence" style="object-fit: contain;">
+          </div>
+          <figcaption><b>Figure 2.1.</b> Convergence of the optimization runs. Two different starting points are used for Hooke-Jeeves and gradient descent, and two different RNG seeds for the genetic algorithm.</figcaption>
         </figure>
       </article>
 

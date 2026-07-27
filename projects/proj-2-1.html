@@ -1,15 +1,48 @@
       <article class="subsection" id="proj-2-1">
-        <h3><span class="num">2.1</span>Personal Project 1</h3>
+        <h3><span class="num">2.1</span>Numerical Simulation and Optimization of a Mechanical Disc Golf Launcher</h3>
         <div class="tags">
           <div>2023</div>
-          <div>Skills learned: C++, Arduino, PID Control, etc</div>
-          <div>Collaborators: &mdash;</div>
+          <div>Python</div>
         </div>
         <p>
-          lorem ipsum
+          Throwing technique is of the utmost importance in the sport of disc golf. Players who are less physically strong but have better technique can typically throw further and more accurately than physically stronger players with poor technique. A commonly given technique advice is that the throwing arm should be like a whip: the arm is relaxed, and most of the power comes from the lower body. In this project, I simulated and optimized a mechanical disc golf launcher from scratch inspired by this technique advice.
         </p>
         <figure>
-          <div class="figure-frame">[ video placeholder &mdash; track run ]</div>
-          <figcaption><b>Figure 2.1.</b> Full track run, unedited.</figcaption>
+          <div class="figure-frame" style="aspect-ratio: 2524 / 1556;">
+            <video controls style="object-fit: contain;"><source src="media/video/disc-golf-launcher-starting-point-1.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption><b>Video 2.1.</b> Simulated disc golf launcher. The animation is slowed down by a factor of 10. (right) Throwing arm as viewed from above. (up left) Weight powering the arm as viewed from the side. The upper dotted line shows initial dropping height, and the lower dotted line shows the height when the rope comes under tension. The green line represents the amount of stretch in the rubber band. (bottom right) Energy of the disc during the launch as a function of time. The dotted lines show how the disc energy would evolve if the disc was not released.</figcaption>
+        </figure>
+        <table class="latex-table">
+          <caption><b>Table 2.1.</b> Optimization parameters of the mechanical disc golf launcher. In total, 15 parameters are optimized. The cost function is given simply by the negative of the total disc energy at launch.</caption>
+          <thead>
+            <tr><th>Optimized parameter</th><th>Number of parameters</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Starting angles of rods and disc (excluding base rod)</td><td>4</td></tr>
+            <tr><td>Lengths of rods</td><td>4</td></tr>
+            <tr><td>Linear mass densities of rods</td><td>4</td></tr>
+            <tr><td>Radius of power transfer wheel at base rod</td><td>1</td></tr>
+            <tr><td>Height of the weight at which the rope loses its slack and weight starts pulling on the wheel</td><td>1</td></tr>
+            <tr><td>Elastic constant of rubber band connecting the weight and the rope</td><td>1</td></tr>
+          </tbody>
+        </table>
+        <figure>
+          <div class="figure-frame" style="aspect-ratio: 2524 / 1556;">
+            <video controls style="object-fit: contain;"><source src="media/video/disc-golf-launcher-hooke-jeeves-starting-point-1.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption><b>Video 2.2.</b> Hooke&ndash;Jeeves optimized launcher, starting from the launcher shown in Video 2.1.</figcaption>
+        </figure>
+        <figure>
+          <div class="figure-frame" style="aspect-ratio: 2524 / 1556;">
+            <video controls style="object-fit: contain;"><source src="media/video/disc-golf-launcher-genetic-rng-2.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption><b>Video 2.3.</b> Genetic algorithm optimized launcher.</figcaption>
+        </figure>
+        <figure>
+          <div class="figure-frame" style="aspect-ratio: 1748 / 1294; max-width: 80%; margin-left: auto; margin-right: auto;">
+            <img src="media/image/disc-golf-launcher-convergence.png" alt="Disc golf launcher optimization convergence" style="object-fit: contain;">
+          </div>
+          <figcaption><b>Figure 2.1.</b> Convergence of the optimization runs. Two different starting points are used for Hooke-Jeeves and gradient descent, and two different RNG seeds for the genetic algorithm.</figcaption>
         </figure>
       </article>
