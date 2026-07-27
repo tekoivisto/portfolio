@@ -162,7 +162,10 @@
   }
   .subsection .tags div{ margin: 0.1rem 0; }
   .subsection p{ text-align: justify; }
-  .equation{ margin: 1.5rem 0; overflow-x: auto; }
+  /* contain:paint forces anything rendered inside (MathJax's own elements
+     included) to be clipped to this box, regardless of any scrollable
+     region an internal element might otherwise create. */
+  .equation{ margin: 1.5rem 0; overflow: hidden; contain: paint; }
 
   /* ---------- Figures (image / video) ---------- */
   figure{ margin: 1.8rem 0; }
@@ -517,10 +520,12 @@
   // is what makes everything smaller at each level.
   //
   // Scroll position relays downward the same way (each level forwards its
-  // scrollY to its child). Hovering/touching a nested copy scrolls that
-  // copy natively -- wheel and touch input are deliberately left alone
-  // rather than intercepted, since each iframe already has its own
-  // independent scroll container and trying to redirect that input
+  // scrollY to its child, throttled to one postMessage per animation frame
+  // so a flood of native scroll events doesn't compound into a flood of
+  // cross-frame messages down the chain). Hovering/touching a nested copy
+  // scrolls that copy natively -- wheel and touch input are deliberately
+  // left alone rather than intercepted, since each iframe already has its
+  // own independent scroll container and trying to redirect that input
   // upward proved unreliable across browsers. Scrolling the real outer
   // page still overrides this: its 'scroll' event re-triggers the
   // downward sync below, which snaps every nested copy back to mirroring
