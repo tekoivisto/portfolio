@@ -199,13 +199,37 @@
   html.mirror-nested{ scrollbar-width: none; }
   html.mirror-nested::-webkit-scrollbar{ display: none; }
   figcaption{
-    font-size: 0.85rem; color: var(--ink-dim); margin-top: 0.6rem;
+    font-size: 1rem; color: var(--ink-dim); margin-top: 0.6rem;
     font-style: italic; text-align:center;
   }
   figcaption b{ font-style: normal; color: var(--ink); }
 
   .project-links{ font-size: 0.9rem; margin-top: 1rem; }
   .project-links a{ margin-right: 1.2rem; }
+
+  /* ---------- Tables (LaTeX / booktabs style: horizontal rules only) ---------- */
+  .latex-table{
+    width: 100%; margin: 1.8rem 0;
+    border-collapse: collapse;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .latex-table th, .latex-table td{
+    text-align: left; padding: 0.5rem 1rem;
+    border: none;
+  }
+  .latex-table th:nth-child(2), .latex-table td:nth-child(2){ text-align: center; }
+  .latex-table th:first-child, .latex-table td:first-child{ padding-left: 0; }
+  .latex-table th:last-child, .latex-table td:last-child{ padding-right: 0; }
+  .latex-table thead th{
+    font-weight: 400; border-bottom: 1px solid var(--rule);
+  }
+  .latex-table caption{
+    caption-side: top; text-align: center;
+    font-size: 1rem; color: var(--ink-dim); font-style: italic;
+    margin-bottom: 0.6rem;
+  }
+  .latex-table caption b{ font-style: normal; color: var(--ink); }
 
   /* ---------- References ---------- */
   .references{
@@ -260,7 +284,7 @@
         <li><a href="#toc" data-target="toc">Table of Contents</a></li>
         <li><a href="#professional" data-target="professional">1&nbsp; Professional Projects</a></li>
         <li class="sub"><a href="#proj-1-1" data-target="proj-1-1">1.1&nbsp; Real-Time Imaging of Alpha Radiation</a></li>
-        <li class="sub"><a href="#proj-1-2" data-target="proj-1-2">1.2&nbsp; Professional Project 2</a></li>
+        <li class="sub"><a href="#proj-1-2" data-target="proj-1-2">1.2&nbsp; Predicting Mechanical Properties of Nanopillars by Interpretable Machine Learning</a></li>
         <li><a href="#personal" data-target="personal">2&nbsp; Personal Projects</a></li>
         <li class="sub"><a href="#proj-2-1" data-target="proj-2-1">2.1&nbsp; Personal Project 1</a></li>
         <li class="sub"><a href="#proj-2-2" data-target="proj-2-2">2.2&nbsp; Engineering Portfolio Website</a></li>
@@ -287,7 +311,7 @@
 
       <div class="toc-entry"><span class="num">1</span><a href="#professional" data-target="professional">Professional Projects</a></div>
       <div class="toc-entry sub"><span class="num">1.1</span><a href="#proj-1-1" data-target="proj-1-1">Real-Time Imaging of Alpha Radiation</a></div>
-      <div class="toc-entry sub"><span class="num">1.2</span><a href="#proj-1-2" data-target="proj-1-2">Professional Project 2</a></div>
+      <div class="toc-entry sub"><span class="num">1.2</span><a href="#proj-1-2" data-target="proj-1-2">Predicting Mechanical Properties of Nanopillars by Interpretable Machine Learning</a></div>
 
       <div class="toc-entry"><span class="num">2</span><a href="#personal" data-target="personal">Personal Projects</a></div>
       <div class="toc-entry sub"><span class="num">2.1</span><a href="#proj-2-1" data-target="proj-2-1">Personal Project 1</a></div>
@@ -370,20 +394,49 @@
       </article>
 
       <article class="subsection" id="proj-1-2">
-        <h3><span class="num">1.2</span>Professional Project 2</h3>
+        <h3><span class="num">1.2</span>Predicting Mechanical Properties of Nanopillars by Interpretable Machine Learning</h3>
         <div class="tags">
-          <div>2024</div>
-          <div>Skills learned: Python, PyTorch, ONNX Runtime, etc</div>
-          <div>Collaborators: &mdash;</div>
+          <div>May 2023 &ndash; May 2024</div>
+          <div>Collaborators: Prof. Lasse Laurson, Ph.D. Marcin Mińkowski</div>
+          <div>HPC, Python, Tensorflow, LAMMPS</div>
         </div>
         <p>
-          lorem ipsum
+          Neural networks are applied to solve increasingly complex problems. However, the improvements in performance are achieved with increasingly complex neural networks, turning them into "black-box models" that are not interpretable by humans. In materials science, machine learning models have proven to be powerful tools for discovering links between microstructure and material properties, but the black-box nature of these models limits the physical insights one might gain from them. In this project conducted at the Tampere University Computational Physics Laboratory Complex Systems research group, I studied the mechanical properties of nanopillars using convolutional neural networks (CNNs) and aimed to interpret the predictions of the black-box model with interpretation techniques. I also wrote my bachelor’s thesis on this project, which led to a first-author publication in APL Machine Learning <a href="#proj-1-2-ref-1">[1]</a>.
+        </p>
+        <p>
+          The computational study is schematically presented in Figure 1.2. First, a dataset of 5000 polycrystalline nanopillars and their corresponding stress–strain curves during deformation is generated using molecular dynamics (MD) simulations. The dataset is used to train a CNN to predict the Young’s moduli and yield stresses of the nanopillars. Different representations of the initial atomic structure are used as input to the CNN to study how much information about the mechanical properties each representation contains. Finally, the internal workings of the otherwise black-box CNN predictions are interpreted with gradient-weighted class activation mapping (Grad-CAM). Selected figures from my bachelor’s thesis and paper are presented in Figure 1.3. The computational tools used in this project are listed in Table 1.1.
         </p>
         <figure>
-          <div class="figure-frame">[ image placeholder &mdash; pipeline diagram ]</div>
-          <figcaption><b>Figure 1.3.</b> Inference pipeline from camera capture to bounding boxes.</figcaption>
+          <div class="figure-frame" style="aspect-ratio: 2234 / 1686; max-width: 75%; margin-left: auto; margin-right: auto;">
+            <img src="media/image/nanopillar-ml-schematic.png" alt="Nanopillar ML schematic" style="object-fit: contain;">
+          </div>
+          <figcaption><b>Figure 1.2.</b> Schematic of the conducted numerical study.</figcaption>
         </figure>
-        <div class="project-links"><a href="#">Source &#8594;</a></div>
+
+        <figure>
+          <div class="figure-frame" style="aspect-ratio: 2511 / 1902;">
+            <img src="media/image/nanopillar-ml-collage.png" alt="Nanopillar ML colalge" style="object-fit: contain;">
+          </div>
+          <figcaption><b>Figure 1.3.</b> Selected figures from my bachelor’s thesis and publication related to the project. (a) Visualizations of descriptors used as an input to the CNN. (b) Prediction accuracy for predicting Young's moduli with a CNN and classical benchmarks. (c) Schematic of Grad-CAM. (d) Grad-Cam fields for a nanopillar, highlighting the most important areas for the prediction. </figcaption>
+        </figure>
+
+        <table class="latex-table">
+          <caption><b>Table 1.1.</b> Computational resources and software used in this project.</caption>
+          <thead>
+            <tr><th>Resource</th><th>Used for</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>CSC Puhti supercomputer</td><td>Large-scale molecular dynamics simulations</td></tr>
+            <tr><td>Tampere University Narvi cluster</td><td>Training large CNNs on GPU</td></tr>
+            <tr><td>Python, Tensorflow</td><td>Machine learning, data analysis, and visualization</td></tr>
+            <tr><td>LAMMPS</td><td>Molecular dynamics simulation engine</td></tr>
+          </tbody>
+        </table>
+
+        <div class="project-links"><a href="https://github.com/tekoivisto/nanopillar-ML">Source &#8594;</a></div>
+        <ol class="references">
+          <li id="proj-1-2-ref-1"><a href="https://doi.org/10.1063/5.0242318">T. Koivisto, M. Mińkowski, and L. Laurson, &ldquo;Predicting mechanical properties of polycrystalline nanopillars by interpretable machine learning,&rdquo; <i>APL Machine Learning</i>, vol. 3, no. 2, 2025.</a></li>
+        </ol>
       </article>
     </section>
 
