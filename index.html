@@ -548,6 +548,16 @@
 </div>
 
 <script>
+  // Browsers try to restore a document's previous scroll position when
+  // re-navigating to a URL already in the tab's session history. Every
+  // nested Droste mirror below reuses the same handful of ?mirror=N URLs
+  // across reloads, so on a real hosted site (reloaded/revisited over a
+  // normal browsing session, unlike a local file opened fresh each time)
+  // this could restore an old scrolled-to-the-bottom position instead of
+  // starting fresh. Disabled so every load starts at the top, and our own
+  // sync logic further below takes it from there.
+  if('scrollRestoration' in history){ history.scrollRestoration = 'manual'; }
+
   // Mobile TOC toggle
   const toggle = document.getElementById('sidebarToggle');
   const sidebar = document.getElementById('sidebar');
