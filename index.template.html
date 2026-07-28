@@ -467,6 +467,25 @@
     const isNested = window.parent !== window;
     document.documentElement.classList.toggle('mirror-nested', isNested);
 
+    // Tell our own parent (if any) once we've actually finished settling,
+    // not just once window 'load' fires: MathJax typesets asynchronously
+    // afterward and can still resize the page for a while. A sync pushed
+    // while we're still short of our final height gets clamped to our
+    // current (too-small) max scroll -- which is what made mirrors land
+    // stuck at the bottom on a real, possibly-uncached network load
+    // (GitHub Pages) even though it looked fine locally, where MathJax
+    // loads instantly from disk/cache.
+    if(isNested){
+      window.addEventListener('load', () => {
+        const notify = () => window.parent.postMessage({ type: 'mirror-ready' }, '*');
+        if(window.MathJax && window.MathJax.startup && window.MathJax.startup.promise){
+          window.MathJax.startup.promise.then(notify, notify);
+        } else {
+          notify();
+        }
+      });
+    }
+
     const mirrorFrame = document.getElementById('mirrorFrame');
     if(mirrorFrame && depth > 0){
       const iframe = document.createElement('iframe');
@@ -502,6 +521,11 @@
       iframe.addEventListener('load', syncScroll);
       window.addEventListener('scroll', syncScroll, { passive: true });
       window.addEventListener('resize', () => { layout(); syncScroll(); });
+
+      // Re-push the sync once the child reports it has actually settled.
+      window.addEventListener('message', (e) => {
+        if(e.data && e.data.type === 'mirror-ready'){ syncScroll(); }
+      });
     }
 
     window.addEventListener('message', (e) => {
